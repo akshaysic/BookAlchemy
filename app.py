@@ -12,6 +12,7 @@ def home():
     query = request.args.get('query')
     sort = request.args.get('sort')
 
+
     books = Book.query
     if query:
         books = books.filter((Book.title.ilike(f'%{query}%')) | (Book.author.has(Author.name.ilike(f'%{query}%'))))
