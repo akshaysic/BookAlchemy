@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Add Author</title></head>
+<body>
+    <h1>Add Author</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+      {% endif %}
+    {% endwith %}
+    <form method="post">
+        <input name="name" placeholder="Author name" required>
+        <input name="birth_date" placeholder="Birth date (YYYY-MM-DD)">
+        <input name="date_of_death" placeholder="Date of death (YYYY-MM-DD)">
+        <button type="submit">Add Author</button>
+    </form>
+</body>
+</html>
