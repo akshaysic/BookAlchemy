@@ -1,22 +1,46 @@
 <!DOCTYPE html>
-<html>
-<head><title>Add Book</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add a Book</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; padding: 2em; }
+        form { background: white; padding: 2em; border-radius: 8px; width: 400px; margin: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        label, input, select { display: block; width: 100%; margin-bottom: 1em; }
+        button { padding: 0.7em 1.5em; }
+    </style>
+</head>
 <body>
-    <h1>Add Book</h1>
+    <h2 style="text-align:center;">Add a Book</h2>
+
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul>{% for message in messages %}<li>{{ message }}</li>{% endfor %}</ul>
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
       {% endif %}
     {% endwith %}
-    <form method="post">
-        <input name="isbn" placeholder="ISBN" required>
-        <input name="title" placeholder="Book Title" required>
-        <input name="publication_year" placeholder="Publication Year" required>
+
+    <form action="/add_book" method="POST">
+        <label for="title">Book Title</label>
+        <input type="text" name="title" required>
+
+        <label for="isbn">ISBN</label>
+        <input type="text" name="isbn">
+
+        <label for="publication_year">Publication Year</label>
+        <input type="text" name="publication_year">
+
+        <label for="author_id">Author</label>
         <select name="author_id" required>
+            <option value="">-- Select an Author --</option>
             {% for author in authors %}
                 <option value="{{ author.id }}">{{ author.name }}</option>
             {% endfor %}
         </select>
+
         <button type="submit">Add Book</button>
     </form>
 </body>

@@ -1,28 +1,46 @@
 <!DOCTYPE html>
-<html>
-<head><title>Library</title></head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>📚 My Digital Library</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 2em; }
+        .book { background: #fff; border-radius: 8px; padding: 1em; margin-bottom: 1em; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+        form { margin-bottom: 2em; }
+        input[type="text"] { padding: 0.5em; width: 300px; }
+        button { padding: 0.5em 1em; }
+    </style>
+</head>
 <body>
-    <h1>My Library</h1>
-    <form method="get" action="/">
-        <input type="text" name="query" placeholder="Search books">
-        <select name="sort">
-            <option value="">Sort by...</option>
-            <option value="title">Title</option>
-            <option value="author">Author</option>
-        </select>
+    <h1>📚 My Digital Library</h1>
+
+    <form action="/" method="get">
+        <input type="text" name="search" placeholder="Search by title or author" value="{{ request.args.get('search', '') }}">
         <button type="submit">Search</button>
     </form>
-    <ul>
-        {% for book in books %}
-            <li>
-                <strong>{{ book.title }}</strong> by {{ book.author.name }}
-                <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-        {% else %}
-            <li>No books found.</li>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
         {% endfor %}
-    </ul>
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if books %}
+        {% for book in books %}
+            <div class="book">
+                <h3>{{ book.title }}</h3>
+                <p><strong>Author:</strong> {{ book.author.name }}</p>
+                <form action="{{ url_for('delete_book', book_id=book.id) }}" method="post">
+                    <button type="submit">Delete Book</button>
+                </form>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No books found.</p>
+    {% endif %}
 </body>
 </html>
