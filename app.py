@@ -7,15 +7,24 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/library.sqlite'
 app.config['SECRET_KEY'] = 'your_secret_key'
 db.init_app(app)
 
+
 @app.route('/')
 def home():
+    """
+    Display the homepage with a list of books.
+
+    Allows optional filtering by title or author using a query string,
+    and supports sorting by title or author name.
+    """
     query = request.args.get('query')
     sort = request.args.get('sort')
 
-
     books = Book.query
     if query:
-        books = books.filter((Book.title.ilike(f'%{query}%')) | (Book.author.has(Author.name.ilike(f'%{query}%'))))
+        books = books.filter(
+            (Book.title.ilike(f'%{query}%')) |
+            (Book.author.has(Author.name.ilike(f'%{query}%')))
+        )
 
     if sort == 'title':
         books = books.order_by(Book.title)
@@ -24,8 +33,14 @@ def home():
 
     return render_template('home.html', books=books.all())
 
+
 @app.route('/add_author', methods=['GET', 'POST'])
 def add_author():
+    """
+    Display a form to add a new author.
+
+    On POST request, creates a new Author and saves it to the database.
+    """
     if request.method == 'POST':
         name = request.form['name']
         birth_date = request.form['birth_date']
@@ -36,10 +51,18 @@ def add_author():
         db.session.commit()
         flash('Author added successfully!')
         return redirect(url_for('add_author'))
+
     return render_template('add_author.html')
+
 
 @app.route('/add_book', methods=['GET', 'POST'])
 def add_book():
+    """
+    Display a form to add a new book.
+
+    On POST request, creates a new Book linked to an existing author
+    and saves it to the database.
+    """
     authors = Author.query.all()
     if request.method == 'POST':
         isbn = request.form['isbn']
@@ -52,10 +75,17 @@ def add_book():
         db.session.commit()
         flash('Book added successfully!')
         return redirect(url_for('add_book'))
+
     return render_template('add_book.html', authors=authors)
+
 
 @app.route('/book/<int:book_id>/delete', methods=['POST'])
 def delete_book(book_id):
+    """
+    Delete a book by its ID.
+
+    If the author has no other books after deletion, the author is also removed.
+    """
     book = Book.query.get_or_404(book_id)
     author = book.author
     db.session.delete(book)
@@ -67,6 +97,7 @@ def delete_book(book_id):
 
     flash('Book deleted successfully!')
     return redirect(url_for('home'))
+
 
 if __name__ == '__main__':
     with app.app_context():
