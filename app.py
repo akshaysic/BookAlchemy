@@ -4,7 +4,7 @@ from data_models import db, Author, Book
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/library.sqlite'
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY')
 db.init_app(app)
 
 @app.route('/')
@@ -30,7 +30,8 @@ def home():
     elif sort == 'author':
         books = books.join(Author).order_by(Author.name)
 
-    return render_template('home.html', books=books.all())
+    books = books.all()  # Force evaluation before rendering
+    return render_template('home.html', books=books)
 
 
 @app.route('/add_author', methods=['GET', 'POST'])
