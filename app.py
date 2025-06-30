@@ -7,7 +7,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data/library.sqlite'
 app.config['SECRET_KEY'] = 'your_secret_key'
 db.init_app(app)
 
-
 @app.route('/')
 def home():
     """
